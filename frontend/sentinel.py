@@ -75,9 +75,8 @@ class CanaryFileSystemEventHandler(FileSystemEventHandler):
                 if canary.get('status') == 'triggered':
                     continue
                 
-                # Build expected encrypted filename
-                # The simulator transforms "CONFIDENTIAL_REPORT.txt" -> "CONFIDENTIAL_REPORT.txt.encrypted"
-                expected_enc_name = f"{canary_name}.encrypted"
+                # The simulator transforms "CONFIDENTIAL_REPORT.txt" -> "CONFIDENTIAL_REPORT.txt.enc"
+                expected_enc_name = f"{canary_name}.enc"
                 
                 print(f"[Sentinel] Checking: file={file_name} vs expected={expected_enc_name}")
                 

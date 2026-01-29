@@ -130,132 +130,61 @@ class ReportCard(ctk.CTkFrame):
     def _view_full_report(self):
         """Show full report in a popup window."""
         popup = ctk.CTkToplevel(self)
-        popup.transient(self)  # Keep window on top
-        popup.grab_set()  # Make window modal
-        popup.title("AI Risk Assessment Report")
-        popup.geometry("700x750")
+        popup.transient(self)
+        popup.grab_set()
+        popup.title("Risk Assessment Report")
+        popup.geometry("700x700") # Increased height for metrics
         popup.configure(fg_color=COLOR_BG)
 
-        # Title
-        title_label = ctk.CTkLabel(
-            popup,
-            text=f"Report - {self.report_data['timestamp']}",
-            font=TITLE_FONT,
-            text_color=COLOR_TEXT
-        )
+        title_label = ctk.CTkLabel(popup, text=f"Report - {self.report_data['timestamp']}", font=TITLE_FONT, text_color=COLOR_TEXT)
         title_label.pack(pady=(20, 10))
 
-        # Main content frame
         main_frame = ctk.CTkScrollableFrame(popup, fg_color=COLOR_BG)
         main_frame.pack(fill="both", expand=True, padx=20, pady=0)
 
-        # Original Report Section
-        report_title_label = ctk.CTkLabel(
-            main_frame,
-            text="Full Report",
-            font=SUBTITLE_FONT,
-            text_color=COLOR_TEXT
-        )
-        report_title_label.pack(anchor="w", pady=(10, 5))
+        # Simulation Metrics Section
+        sim_data = self.report_data.get("simulation_data")
+        if sim_data:
+            metrics_title_label = ctk.CTkLabel(main_frame, text="Simulation Metrics", font=SUBTITLE_FONT, text_color=COLOR_TEXT)
+            metrics_title_label.pack(anchor="w", pady=(10, 5))
 
-        report_textbox = ctk.CTkTextbox(
-            main_frame,
-            wrap="word",
-            font=FONT,
-            text_color=COLOR_TEXT,
-            fg_color=COLOR_CARD,
-            height=200,
-            border_spacing=5
-        )
+            metrics_text_content = ""
+            for key, value in sim_data.items():
+                formatted_key = key.replace('_', ' ').title()
+                if isinstance(value, dict):
+                    metrics_text_content += f"{formatted_key}:\n"
+                    for sub_key, sub_value in value.items():
+                        metrics_text_content += f"  - {sub_key}: {sub_value:.2f}%\n"
+                elif isinstance(value, float):
+                    metrics_text_content += f"{formatted_key}: {value:.2f}\n"
+                else:
+                    metrics_text_content += f"{formatted_key}: {value}\n"
+            
+            metrics_textbox = ctk.CTkTextbox(main_frame, wrap="word", font=FONT, text_color=COLOR_TEXT, fg_color=COLOR_CARD, height=250, border_spacing=5)
+            metrics_textbox.pack(fill="x", expand=True)
+            metrics_textbox.insert("0.0", metrics_text_content)
+            metrics_textbox.configure(state="disabled")
+
+        # Original Report Section
+        report_title_label = ctk.CTkLabel(main_frame, text="AI-Generated Summary", font=SUBTITLE_FONT, text_color=COLOR_TEXT)
+        report_title_label.pack(anchor="w", pady=(20, 5))
+
+        report_textbox = ctk.CTkTextbox(main_frame, wrap="word", font=FONT, text_color=COLOR_TEXT, fg_color=COLOR_CARD, height=200, border_spacing=5)
         report_textbox.pack(fill="x", expand=True)
         report_textbox.insert("0.0", self.report_data["report"])
         report_textbox.configure(state="disabled")
-
-        # AI-Generated Summary Section
-        summary_title_label = ctk.CTkLabel(
-            main_frame,
-            text="AI-Generated Summary",
-            font=SUBTITLE_FONT,
-            text_color=COLOR_TEXT
-        )
-        summary_title_label.pack(anchor="w", pady=(20, 5))
-
-        summary_textbox = ctk.CTkTextbox(
-            main_frame,
-            wrap="word",
-            font=FONT,
-            text_color=COLOR_TEXT,
-            fg_color=COLOR_CARD,
-            height=200,
-            border_spacing=5
-        )
-        summary_textbox.pack(fill="x", expand=True)
-        summary_textbox.insert("0.0", "Generating summary...")
-
-        # Generate summary in a separate thread to avoid UI freeze
-        def generate_and_display_summary():
-            try:
-                from Backend.risk_summary_generator import RiskSummaryGenerator
-                generator = RiskSummaryGenerator()
-                summary = generator.generate_summary(self.report_data["input_data"])
-                summary_textbox.configure(state="normal")
-                summary_textbox.delete("0.0", "end")
-                summary_textbox.insert("0.0", summary)
-                summary_textbox.configure(state="disabled")
-            except Exception as e:
-                summary_textbox.configure(state="normal")
-                summary_textbox.delete("0.0", "end")
-                summary_textbox.insert("0.0", f"Error generating summary: {e}")
-                summary_textbox.configure(state="disabled")
-
-        import threading
-        threading.Thread(target=generate_and_display_summary, daemon=True).start()
 
         # Action buttons frame
         action_frame = ctk.CTkFrame(popup, fg_color="transparent")
         action_frame.pack(pady=(15, 20))
 
-        copy_btn = ctk.CTkButton(
-            action_frame,
-            text="Copy Report",
-            fg_color=COLOR_ACCENT,
-            hover_color="#00a8a8",
-            width=120,
-            command=lambda: self._copy_to_clipboard(popup, self.report_data["report"], "Report")
-        )
+        copy_btn = ctk.CTkButton(action_frame, text="Copy Report", fg_color=COLOR_ACCENT, hover_color="#00a8a8", width=120, command=lambda: self._copy_to_clipboard(popup, self.report_data["report"], "Report"))
         copy_btn.pack(side="left", padx=10)
         
-        copy_summary_btn = ctk.CTkButton(
-            action_frame,
-            text="Copy Summary",
-            fg_color=COLOR_ACCENT,
-            hover_color="#00a8a8",
-            width=120,
-            command=lambda: self._copy_to_clipboard(popup, summary_textbox.get("0.0", "end"), "Summary")
-        )
-        copy_summary_btn.pack(side="left", padx=10)
-
-        save_btn = ctk.CTkButton(
-            action_frame,
-            text="Save",
-            fg_color=COLOR_BUTTON,
-            hover_color="#219150",
-            width=100,
-            command=self._save_to_file
-        )
+        save_btn = ctk.CTkButton(action_frame, text="Save", fg_color=COLOR_BUTTON, hover_color="#219150", width=100, command=self._save_to_file)
         save_btn.pack(side="left", padx=10)
 
-        # Close button
-        close_btn = ctk.CTkButton(
-            action_frame,
-            text="Close",
-            fg_color="transparent",
-            border_width=1,
-            border_color="#555555",
-            hover_color="#333333",
-            width=80,
-            command=popup.destroy
-        )
+        close_btn = ctk.CTkButton(action_frame, text="Close", fg_color="transparent", border_width=1, border_color="#555555", hover_color="#333333", width=80, command=popup.destroy)
         close_btn.pack(side="left", padx=10)
 
     def _copy_to_clipboard(self, popup, content, content_type="Report"):
@@ -296,7 +225,7 @@ class ReportCard(ctk.CTkFrame):
 
 
 class ReportsPage(ctk.CTkFrame):
-    """Main Reports page displaying historical AI risk assessments."""
+    """Main Reports page displaying historical Risk assessments."""
 
     def __init__(self, master, **kwargs):
         super().__init__(master, fg_color=COLOR_BG, **kwargs)

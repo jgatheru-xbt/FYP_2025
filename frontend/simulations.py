@@ -386,11 +386,14 @@ class SimulationSettings(ctk.CTkFrame):
                     dashboard.after(0, ui_update)
 
             # Call the simulation (this will print to stdout as well)
-            simulate_encrypt_folder(folder, test_mode=True, algorithm=algorithm, stop_event=stop_event, progress_callback=progress_callback, allowed_ext=(None if all_files else None), drop_ransom_note=drop_ransom_note, ransom_note_content=ransom_note_content)
+            simulation_metrics = simulate_encrypt_folder(folder, test_mode=True, algorithm=algorithm, stop_event=stop_event, progress_callback=progress_callback, allowed_ext=(None if all_files else None), drop_ransom_note=drop_ransom_note, ransom_note_content=ransom_note_content)
             print("[UI] simulate_encrypt_folder returned (in-process).")
             # Store simulation data
-            speed = last_data['files'] / last_data['time'] if last_data['time'] > 0 else 0
-            shared_data.last_simulation_data = {'speed': speed, 'files': last_data['files'], 'time': last_data['time'], 'algorithm': algorithm}
+            if simulation_metrics:
+                shared_data.last_simulation_data = simulation_metrics
+            else:
+                speed = last_data['files'] / last_data['time'] if last_data['time'] > 0 else 0
+                shared_data.last_simulation_data = {'speed': speed, 'files': last_data['files'], 'time': last_data['time'], 'algorithm': algorithm}
             return
         except Exception as e:
             print(f"[UI] In-process simulate failed (falling back to subprocess): {e}")

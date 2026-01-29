@@ -7,3 +7,6 @@ transformers
 torch
 datasets
 accelerate
+psutil
+scipy
+numpy
