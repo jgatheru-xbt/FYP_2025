@@ -1,0 +1,76 @@
+[
+  {
+    "timestamp": "2026-01-23 16:51:52",
+    "input_data": "Encryption speed: 24.218083540020775 files/sec, Files encrypted: 29, Time: 1.1974523067474365 seconds, Algorithm: AES",
+    "report": "[AI SECURITY REPORT: HIGH]\n\nThreat Analysis: High encryption speed (24.218083540020775 files/sec) suggests ransomware activity.\n\nBusiness Impact: Significant data at risk within minutes.\n\nMitigation: 1. Stop the process. 2. Check backups. 3. Scan for malware.",
+    "simulation_data": {
+      "speed": 24.218083540020775,
+      "files": 29,
+      "time": 1.1974523067474365,
+      "algorithm": "AES"
+    }
+  },
+  {
+    "timestamp": "2026-01-28 10:27:33",
+    "input_data": "Encryption speed: 38.90020141189273 files/sec, Files encrypted: 6, Time: 0.15424084663391113 seconds, Algorithm: AES",
+    "report": "[AI SECURITY REPORT: HIGH]\n\nThreat Analysis: High encryption speed (38.90020141189273 files/sec) suggests ransomware activity.\n\nBusiness Impact: Significant data at risk within minutes.\n\nMitigation: 1. Stop the process. 2. Check backups. 3. Scan for malware.",
+    "simulation_data": {
+      "speed": 38.90020141189273,
+      "files": 6,
+      "time": 0.15424084663391113,
+      "algorithm": "AES"
+    }
+  },
+  {
+    "timestamp": "2026-01-28 11:11:23",
+    "input_data": "Algorithm: AES, Status: Aborted by Canary, Files Encrypted: 0/0, Trigger: canary.txt",
+    "report": "Simulation run results:\n  - Status: Aborted by Canary\n  - Duration: 0.06 seconds\n  - Files Found: 0\n  - Files Encrypted: 0\n  - Canary Triggered: canary.txt\n",
+    "simulation_data": {
+      "start_time": 1769587883.342911,
+      "end_time": 1769587883.4027898,
+      "time": 0.05987882614135742,
+      "files_found": 0,
+      "files_encrypted": 0,
+      "algorithm": "AES",
+      "status": "Aborted by Canary",
+      "canary_file": "canary.txt"
+    }
+  },
+  {
+    "timestamp": "2026-01-28 11:11:31",
+    "input_data": "Encryption speed: 0 files/sec, Files encrypted: 0, Time: 0 seconds, Algorithm: AES",
+    "report": "[AI SECURITY REPORT: LOW]\n\nThreat Analysis: Slow encryption rate (0.0 files/sec), likely benign.\n\nBusiness Impact: Minimal immediate threat.\n\nMitigation: 1. Log activity. 2. Verify authorization. 3. Continue monitoring.",
+    "simulation_data": {
+      "speed": 0,
+      "files": 0,
+      "time": 0,
+      "algorithm": "AES"
+    }
+  },
+  {
+    "timestamp": "2026-01-28 11:32:45",
+    "input_data": "Algorithm: AES, Status: Completed, Files Encrypted: 18/18",
+    "report": "Simulation run results:\n  - Status: Completed\n  - Duration: 0.93 seconds\n  - Files Found: 18\n  - Files Encrypted: 18\n",
+    "simulation_data": {
+      "start_time": 1769589164.188773,
+      "end_time": 1769589165.1141107,
+      "time": 0.9253377914428711,
+      "files_found": 18,
+      "files_encrypted": 18,
+      "algorithm": "AES",
+      "status": "Completed",
+      "canary_file": null
+    }
+  },
+  {
+    "timestamp": "2026-01-28 11:32:54",
+    "input_data": "Encryption speed: 20.111105457910575 files/sec, Files encrypted: 18, Time: 0.8950278759002686 seconds, Algorithm: AES",
+    "report": "[AI SECURITY REPORT: HIGH]\n\nThreat Analysis: High encryption speed (20.111105457910575 files/sec) suggests ransomware activity.\n\nBusiness Impact: Significant data at risk within minutes.\n\nMitigation: 1. Stop the process. 2. Check backups. 3. Scan for malware.",
+    "simulation_data": {
+      "speed": 20.111105457910575,
+      "files": 18,
+      "time": 0.8950278759002686,
+      "algorithm": "AES"
+    }
+  }
+]

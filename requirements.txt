@@ -1,0 +1,9 @@
+cryptography
+customtkinter
+pillow
+requests
+watchdog
+transformers
+torch
+datasets
+accelerate
