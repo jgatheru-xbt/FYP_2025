@@ -4,7 +4,7 @@ import os
 import sys
 
 # Add project root to the Python path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # Import page classes
 from frontend.home import HomePage
@@ -27,6 +27,7 @@ BADGE_FONT = ("Roboto", 10, "bold")
 MONO_FONT = ("Consolas", 11)
 DOT_SIZE = 10
 
+
 class NavigationSidebar(ctk.CTkFrame):
     def __init__(self, master, command, **kwargs):
         super().__init__(master, fg_color="#23272e", **kwargs)
@@ -37,11 +38,17 @@ class NavigationSidebar(ctk.CTkFrame):
         self.logo_frame.grid(row=0, column=0, pady=(20, 30), padx=20, sticky="ew")
         self.logo_frame.grid_columnconfigure(0, weight=1)
 
-        self.logo = ctk.CTkLabel(self.logo_frame, text="", fg_color="#1500FA", width=30, height=30)
+        self.logo = ctk.CTkLabel(
+            self.logo_frame, text="", fg_color="#1500FA", width=30, height=30
+        )
         self.logo.pack(side="left", padx=(0, 10))
 
-        self.title_label = ctk.CTkLabel(self.logo_frame, text="Ransomware Simulator",
-                                        font=("Roboto", 16, "bold"), text_color="white")
+        self.title_label = ctk.CTkLabel(
+            self.logo_frame,
+            text="Ransomware Simulator",
+            font=("Roboto", 16, "bold"),
+            text_color="white",
+        )
         self.title_label.pack(side="left")
 
         self.nav_buttons = {}
@@ -60,7 +67,9 @@ class NavigationSidebar(ctk.CTkFrame):
             has_badge = item_info[2] if len(item_info) > 2 else False
 
             button_frame = ctk.CTkFrame(self, fg_color="transparent")
-            button_frame.grid(row=i+1, column=0, sticky="ew", padx=10, pady=(10 if i==0 else 0, 0))
+            button_frame.grid(
+                row=i + 1, column=0, sticky="ew", padx=10, pady=(10 if i == 0 else 0, 0)
+            )
             button_frame.grid_columnconfigure(0, weight=1)
 
             button = ctk.CTkButton(
@@ -71,18 +80,23 @@ class NavigationSidebar(ctk.CTkFrame):
                 anchor="w",
                 hover_color="#1E2732",
                 font=SIDEBAR_FONT,
-                command=lambda name=frame_name: self.command(name)
+                command=lambda name=frame_name: self.command(name),
             )
             button.grid(row=0, column=0, sticky="ew")
             self.nav_buttons[frame_name] = button
 
             if has_badge:
                 badge_label = ctk.CTkLabel(
-                    button_frame, text="New", font=BADGE_FONT,
-                    text_color="#fff", fg_color="#e53935",
-                    corner_radius=8, width=32, height=18
+                    button_frame,
+                    text="New",
+                    font=BADGE_FONT,
+                    text_color="#fff",
+                    fg_color="#e53935",
+                    corner_radius=8,
+                    width=32,
+                    height=18,
                 )
-                badge_label.grid(row=0, column=1, padx=(5,0))
+                badge_label.grid(row=0, column=1, padx=(5, 0))
 
         # Place flexible spacer row right after the buttons so following widgets (Quit) are bottom-aligned
         spacer_row = len(nav_items) + 1
@@ -97,9 +111,11 @@ class NavigationSidebar(ctk.CTkFrame):
             anchor="w",
             hover_color="#1E2732",
             font=SIDEBAR_FONT,
-            command=master.quit_app
+            command=master.quit_app,
         )
-        quit_button.grid(row=spacer_row + 1, column=0, sticky="ew", padx=10, pady=(0, 20))
+        quit_button.grid(
+            row=spacer_row + 1, column=0, sticky="ew", padx=10, pady=(0, 20)
+        )
 
         self.active_button = None
         self.select_button("home_page")  # Default active page
@@ -107,17 +123,18 @@ class NavigationSidebar(ctk.CTkFrame):
     def select_button(self, name):
         if self.active_button:
             self.active_button.configure(text_color="white", fg_color="transparent")
-        
+
         button = self.nav_buttons.get(name)
         if button:
             button.configure(text_color="#ff9800", fg_color="#2d333b")
             self.active_button = button
 
+
 class MainApp(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Ransomware Simulator")
-        self.after(0, lambda: self.state('zoomed'))
+        self.after(0, lambda: self.state("zoomed"))
         # self.minsize(900, 600)
 
         self.grid_columnconfigure(1, weight=1)
@@ -143,7 +160,7 @@ class MainApp(ctk.CTk):
         # Ensure the safe zone directory exists
         self._create_safe_zone()
 
-        self.change_page("home_page") # Set initial page
+        self.change_page("home_page")  # Set initial page
 
     def _create_safe_zone(self):
         """Creates the Ransomware_Test directory if it doesn't exist."""
@@ -163,26 +180,28 @@ class MainApp(ctk.CTk):
 
     def change_page(self, page_name):
         if self.current_page:
-            self.current_page.grid_forget() # Hide current page
+            self.current_page.grid_forget()  # Hide current page
 
         page = self.pages.get(page_name)
         if page:
-            page.grid(row=0, column=0, sticky="nsew") # Show new page
+            page.grid(row=0, column=0, sticky="nsew")  # Show new page
             self.current_page = page
-            self.sidebar.select_button(page_name) # Update sidebar button state
+            self.sidebar.select_button(page_name)  # Update sidebar button state
 
             # Refresh reports page if applicable
             if page_name == "reports_page" and hasattr(page, "refresh_reports"):
                 page.refresh_reports()
+
     def quit_app(self):
         """Gracefully quit the application."""
         # Stop Sentinel watchdog monitoring
         if "sentinel_page" in self.pages:
             sentinel_page = self.pages["sentinel_page"]
-            if hasattr(sentinel_page, 'stop_monitoring'):
+            if hasattr(sentinel_page, "stop_monitoring"):
                 sentinel_page.stop_monitoring()
-        
+
         self.destroy()
+
 
 if __name__ == "__main__":
     app = MainApp()

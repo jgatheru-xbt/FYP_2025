@@ -23,6 +23,34 @@ COLOR_TEXT = "#ffffff"
 COLOR_TEXT_SECONDARY = "#b0b0b0"
 
 
+import customtkinter as ctk
+import tkinter as tk
+import os
+from tkinter import messagebox
+from datetime import datetime
+import Backend.reports_storage as reports_storage
+from fpdf import FPDF
+import matplotlib.pyplot as plt
+import io
+
+# Define common fonts and colors
+FONT = ("Roboto", 12)
+TITLE_FONT = ("Roboto", 20, "bold")
+SUBTITLE_FONT = ("Roboto", 14, "bold")
+LABEL_FONT = ("Roboto", 11)
+SMALL_FONT = ("Roboto", 9)
+
+# Color Palette
+COLOR_BG = "#212121"
+COLOR_CARD = "#2b2b2b"
+COLOR_ACCENT = "#00cec9"
+COLOR_BUTTON = "#27ae60"
+COLOR_WARNING = "#e67e22"
+COLOR_DANGER = "#e74c3c"
+COLOR_TEXT = "#ffffff"
+COLOR_TEXT_SECONDARY = "#b0b0b0"
+
+
 class ReportCard(ctk.CTkFrame):
     """Card displaying a single report entry."""
 
@@ -133,7 +161,7 @@ class ReportCard(ctk.CTkFrame):
         popup.transient(self)
         popup.grab_set()
         popup.title("Risk Assessment Report")
-        popup.geometry("700x700") # Increased height for metrics
+        popup.geometry("700x850") # Increased height for metrics
         popup.configure(fg_color=COLOR_BG)
 
         title_label = ctk.CTkLabel(popup, text=f"Report - {self.report_data['timestamp']}", font=TITLE_FONT, text_color=COLOR_TEXT)
@@ -181,7 +209,7 @@ class ReportCard(ctk.CTkFrame):
         copy_btn = ctk.CTkButton(action_frame, text="Copy Report", fg_color=COLOR_ACCENT, hover_color="#00a8a8", width=120, command=lambda: self._copy_to_clipboard(popup, self.report_data["report"], "Report"))
         copy_btn.pack(side="left", padx=10)
         
-        save_btn = ctk.CTkButton(action_frame, text="Save", fg_color=COLOR_BUTTON, hover_color="#219150", width=100, command=self._save_to_file)
+        save_btn = ctk.CTkButton(action_frame, text="Save as PDF", fg_color=COLOR_BUTTON, hover_color="#219150", width=120, command=self._save_report_dialog)
         save_btn.pack(side="left", padx=10)
 
         close_btn = ctk.CTkButton(action_frame, text="Close", fg_color="transparent", border_width=1, border_color="#555555", hover_color="#333333", width=80, command=popup.destroy)
@@ -193,29 +221,81 @@ class ReportCard(ctk.CTkFrame):
         popup.clipboard_append(content)
         messagebox.showinfo("Copied", f"{content_type} text copied to clipboard!", parent=popup)
 
-    def _save_to_file(self):
-        """Save report to a text file."""
-        filename = f"report_{self.report_data['timestamp'].replace(':', '-').replace(' ', '_')}.txt"
+    def _save_report_dialog(self):
+        """Open a dialog to save the report as a PDF."""
+        filename = f"report_{self.report_data['timestamp'].replace(':', '-').replace(' ', '_')}.pdf"
         
-        # Use filedialog to ask where to save
         from tkinter import filedialog
         file_path = filedialog.asksaveasfilename(
-            defaultextension=".txt",
+            defaultextension=".pdf",
             initialfile=filename,
-            filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
-            title="Save Report"
+            filetypes=[("PDF Documents", "*.pdf"), ("All files", "*.*")],
+            title="Save Report as PDF"
         )
         
         if file_path:
             try:
-                with open(file_path, 'w', encoding='utf-8') as f:
-                    f.write(f"Timestamp: {self.report_data['timestamp']}\n")
-                    f.write(f"Input Data: {self.report_data['input_data']}\n")
-                    f.write("-" * 50 + "\n\n")
-                    f.write(self.report_data["report"])
+                self._save_to_pdf(file_path)
                 messagebox.showinfo("Saved", f"Report saved to {os.path.basename(file_path)}")
             except Exception as e:
-                messagebox.showerror("Error", f"Could not save file: {e}")
+                messagebox.showerror("Error", f"Could not save PDF file: {e}")
+
+    def _save_to_pdf(self, file_path: str):
+        """Generate and save a PDF report."""
+        pdf = FPDF()
+        pdf.add_page()
+        
+        # Title
+        pdf.set_font("Helvetica", "B", 18)
+        pdf.cell(0, 10, "Risk Assessment Report", 0, 1, "C")
+        pdf.set_font("Helvetica", "", 10)
+        pdf.cell(0, 8, f"Timestamp: {self.report_data['timestamp']}", 0, 1, "C")
+        pdf.ln(10)
+
+        sim_data = self.report_data.get("simulation_data")
+        if sim_data:
+            pdf.set_font("Helvetica", "B", 14)
+            pdf.cell(0, 10, "Simulation Metrics", 0, 1)
+            pdf.set_font("Helvetica", "", 10)
+            
+            for key, value in sim_data.items():
+                formatted_key = key.replace('_', ' ').title()
+                if key != "file_type_distribution_pct":
+                    if isinstance(value, float):
+                        pdf.cell(0, 6, f"- {formatted_key}: {value:.2f}", 0, 1)
+                    else:
+                        pdf.cell(0, 6, f"- {formatted_key}: {value}", 0, 1)
+            pdf.ln(5)
+
+            # Chart
+            dist = sim_data.get("file_type_distribution_pct")
+            if dist and isinstance(dist, dict) and sum(dist.values()) > 0:
+                plt.style.use('dark_background')
+                fig, ax = plt.subplots(figsize=(6, 4), subplot_kw=dict(aspect="equal"))
+                labels = dist.keys()
+                sizes = dist.values()
+                
+                wedges, texts, autotexts = ax.pie(sizes, autopct='%1.1f%%',
+                                                  textprops=dict(color="w"))
+                ax.legend(wedges, labels, title="File Types", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
+                plt.setp(autotexts, size=8, weight="bold")
+                ax.set_title("File Type Distribution")
+
+                buf = io.BytesIO()
+                plt.savefig(buf, format='png', bbox_inches='tight')
+                buf.seek(0)
+                pdf.image(buf, x=pdf.get_x() + 20, w=pdf.w - 100)
+                plt.close(fig)
+                pdf.ln(70)
+
+
+        # AI Summary
+        pdf.set_font("Helvetica", "B", 14)
+        pdf.cell(0, 10, "AI-Generated Summary", 0, 1)
+        pdf.set_font("Helvetica", "", 10)
+        pdf.multi_cell(0, 5, self.report_data.get("report", "No summary available."))
+
+        pdf.output(file_path)
 
     def _delete_report(self):
         """Delete this report."""
