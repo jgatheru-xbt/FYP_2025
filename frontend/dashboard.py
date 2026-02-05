@@ -8,17 +8,14 @@ import tkinter as tk
 import customtkinter as ctk
 
 from Backend.redirector import LogRedirector
-from Backend.encrypt import simulate_encrypt_folder
-# from Backend.scanner import confirm_sandbox
-# from frontend.guide import AIGuide
+# from Backend.encrypt import simulate_encrypt_folder
 import AI.shared_data as shared_data
 import Backend.reports_storage as reports_storage
 
 
 import sys
 
-# CustomTkinter environments often redirect stdout. 
-# We need to ensure the redirector has the 'isatty' method.
+
 try:
     from Backend.risk_summary_generator import RiskSummaryGenerator
 except ImportError:
@@ -89,8 +86,7 @@ class CircularProgress(tk.Canvas):
         )
 
 
-class StatusBar(ctk.CTkFrame):
-    """Status indicator bar (Simulator or Sandbox)."""
+class StatusBar(ctk.CTkFrame): #simulator or sandbox 
     
     def __init__(self, master, label: str, bg_color: str, **kwargs):
         super().__init__(master, fg_color=bg_color, corner_radius=8, **kwargs)
@@ -188,7 +184,6 @@ class ProgressCard(ctk.CTkFrame):
 
 
 class DashboardPage(ctk.CTkFrame):
-    """Main Dashboard Page rearranged to match design reference."""
 
     def __init__(self, master, **kwargs):
         super().__init__(master, fg_color=COLOR_BG, **kwargs)
@@ -214,25 +209,15 @@ class DashboardPage(ctk.CTkFrame):
         self.grid_rowconfigure(2, weight=0)
         self.grid_columnconfigure(0, weight=1)
 
-        # ===== ROW 0: Status Bars (top) =====
-        status_row = ctk.CTkFrame(self, fg_color="transparent")
-        status_row.grid(row=0, column=0, sticky="ew", padx=16, pady=(12, 6))
-        status_row.grid_columnconfigure(0, weight=1)
-        status_row.grid_columnconfigure(1, weight=1)
-
-        self.simulator_status = StatusBar(
-            status_row,
-            "Simulator: Idle / Running / Completed",
-            COLOR_STATUS_SIMULATOR
+        # ===== ROW 0: Title =====
+        title = ctk.CTkLabel(
+            self,
+            text="Simulator Dashboard",
+            font=TITLE_FONT,
+            text_color="#ffffff"
         )
-        self.simulator_status.grid(row=0, column=0, sticky="ew", padx=(0, 6))
+        title.grid(row=0, column=0, sticky="ew", padx=16, pady=(12, 6))
 
-        self.sandbox_status = StatusBar(
-            status_row,
-            "Sandbox: Active",
-            COLOR_STATUS_SANDBOX
-        )
-        self.sandbox_status.grid(row=0, column=1, sticky="ew", padx=(6, 0))
 
         # ===== ROW 1: Main Content =====
         main_area = ctk.CTkFrame(self, fg_color="transparent")
@@ -241,20 +226,20 @@ class DashboardPage(ctk.CTkFrame):
         main_area.grid_rowconfigure(1, weight=3)   # lower split row (controls + stats)
         main_area.grid_columnconfigure(0, weight=1)
 
-        # --- Recent Logs (Top) ---
+        # recent logs top
         self.logs_panel = TerminalPanel(main_area)
         self.logs_panel.grid(row=0, column=0, sticky="nsew", pady=(0, 12))
 
-        # --- Lower area: two columns (left: sentinel monitor, right: stats) ---
+        # Lower area: two columns (left: sentinel monitor, right: stats) 
         lower_area = ctk.CTkFrame(main_area, fg_color="transparent")
         lower_area.grid(row=1, column=0, sticky="nsew")
-        lower_area.grid_columnconfigure(0, weight=2)  # sentinel monitor gets more space
-        lower_area.grid_columnconfigure(1, weight=1)  # stats narrower
+        lower_area.grid_columnconfigure(0, weight=1)  
+        lower_area.grid_columnconfigure(1, weight=2)  
         lower_area.grid_rowconfigure(0, weight=1)
 
         # Sentinel Monitor Card (left) - will be linked to Sentinel page
         self.sentinel_monitor_card = SentinelMonitorCard(lower_area, sentinel_page_ref=None)
-        self.sentinel_monitor_card.grid(row=0, column=0, sticky="nsew", padx=(0, 12))
+        self.sentinel_monitor_card.grid(row=0, column=0, sticky="nsew", padx=(5, 7))
 
         # Stats column (right)
         stats_col = ctk.CTkFrame(lower_area, fg_color="transparent")
@@ -277,7 +262,7 @@ class DashboardPage(ctk.CTkFrame):
         self.card_time_elapsed = StatsCard(stats_col, "Time Elapsed", "00:00")
         self.card_time_elapsed.grid(row=1, column=1, sticky="nsew", padx=6, pady=(8, 0))
 
-        # AI Risk Assessment Card
+        # Risk Assessment Card
         ai_card = ctk.CTkFrame(stats_col, fg_color=COLOR_CARD, corner_radius=12)
         ai_card.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=6, pady=(8, 0))
         ai_card.grid_columnconfigure(0, weight=1)
@@ -285,8 +270,8 @@ class DashboardPage(ctk.CTkFrame):
 
         ai_title = ctk.CTkLabel(
             ai_card,
-            text="AI Risk Assessment",
-            font=("Roboto", 12, "bold"),
+            text="Generate Report",
+            font=("fixedsys", 12, "bold"),
             text_color="#ffffff"
         )
         ai_title.grid(row=0, column=0, sticky="w", padx=12, pady=(10, 5))
@@ -346,20 +331,6 @@ class DashboardPage(ctk.CTkFrame):
 
         # Redirect stdout -> logs panel
         sys.stdout = LogRedirector(self.logs_panel)
-        
-
-        
-    # --- Existing logic methods kept intact (start/pause/stop) ---
-    # def _check_and_update_sandbox(self):
-    #     folder = ""
-    #     try:
-    #         folder = self.control_panel.id_entry_1.get() if hasattr(self, "control_panel") else ""
-    #         active = False
-    #         if folder and os.path.isdir(folder):
-    #             # active = confirm_sandbox(folder)
-    #         self.simulator_status.set_text(self.simulator_status.status_label.cget("text"))  # no-op visual keep
-    #     except Exception:
-    #         pass
 
     def start_simulation(self):
         if self._sim_thread and self._sim_thread.is_alive():
@@ -376,7 +347,6 @@ class DashboardPage(ctk.CTkFrame):
 
         def runner():
             try:
-                # Example mock progress (replace with actual backend call)
                 for i in range(1, 101):
                     if self._stop_event.is_set():
                         break
@@ -415,13 +385,6 @@ class DashboardPage(ctk.CTkFrame):
         self._sim_thread = threading.Thread(target=runner, daemon=True)
         self._sim_thread.start()
 
-    def pause_simulation(self):
-        if self._sim_thread and self._sim_thread.is_alive():
-            print("Simulation paused.")
-            self.simulator_status.set_text("Simulator: Idle / Running / Completed")
-        else:
-            print("No active simulation to pause.")
-
     def stop_simulation(self):
         if self._stop_event and not self._stop_event.is_set():
             self._stop_event.set()
@@ -435,7 +398,7 @@ class DashboardPage(ctk.CTkFrame):
         if not self.generator:
             self.ai_textbox.configure(state="normal")
             self.ai_textbox.delete("0.0", tk.END)
-            self.ai_textbox.insert("0.0", "AI model not available. Please train the model first.")
+            self.ai_textbox.insert("0.0", "Model not available. Please configure the model first.")
             self.ai_textbox.configure(state="disabled")
             return
         
@@ -463,7 +426,7 @@ class DashboardPage(ctk.CTkFrame):
                     report_text=summary,
                     simulation_data=shared_data.last_simulation_data.copy()
                 )
-                print(f"Report saved successfully")
+                print("Report saved successfully")
                 
                 self.after(0, lambda: self._update_ai_text(summary))
             except Exception as e:
@@ -820,3 +783,15 @@ class App(ctk.CTk):
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{x}+{y}")
 
+
+
+
+
+# del
+
+    def pause_simulation(self):
+        if self._sim_thread and self._sim_thread.is_alive():
+            print("Simulation paused.")
+            self.simulator_status.set_text("Simulator: Idle / Running / Completed")
+        else:
+            print("No active simulation to pause.")

@@ -19,13 +19,14 @@ from Backend.safe_zone import SAFE_ZONE_PATH
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 
-# Define common fonts
-FONT = ("Roboto", 12)
-TITLE_FONT = ("Roboto", 20, "bold")
-SIDEBAR_FONT = ("Roboto", 14, "bold")
-BADGE_FONT = ("Roboto", 10, "bold")
+# Define common fonts ---->> i just realised windows has an entire collection of preinstalled fonts, cool :)
+FONT = ("fixedsys", 12)
+TITLE_FONT = ("fixedsys", 20, "bold")
+SIDEBAR_FONT = ("fixedsys", 14, "bold")
+BADGE_FONT = ("fixedsys", 10, "bold")
 MONO_FONT = ("Consolas", 11)
 DOT_SIZE = 10
+
 
 
 class NavigationSidebar(ctk.CTkFrame):
