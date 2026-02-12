@@ -13,7 +13,7 @@ LABEL_FONT = ("Roboto", 11)
 ENTRY_FONT = ("Roboto", 11)
 BTN_FONT = ("Roboto", 13, "bold")
 
-FG_ORANGE = "#D35400"
+FG_ORANGE = "#EA650C"
 FG_ORANGE_HOVER = "#A04000"
 FG_GREEN = "#27AE60"
 FG_GREEN_HOVER = "#1E8449"
@@ -41,7 +41,7 @@ class RecoveryPage(ctk.CTkFrame):
 
         subtitle = ctk.CTkLabel(
             wrapper,
-            text="Decrypt files using the key generated during simulation.",
+            text="Recover files using the key generated during simulation.",
             font=SUBTITLE_FONT,
             text_color="#cccccc"
         )

@@ -111,7 +111,7 @@ class ReportCard(ctk.CTkFrame):
             fg_color=COLOR_ACCENT,
             hover_color="#00a8a8",
             height=28,
-            font=SMALL_FONT,
+            font=FONT,
             command=self._view_full_report
         )
         view_btn.pack(side="left", padx=(0, 8))
@@ -122,7 +122,7 @@ class ReportCard(ctk.CTkFrame):
             fg_color=COLOR_DANGER,
             hover_color="#c0392b",
             height=28,
-            font=SMALL_FONT,
+            font=FONT,
             command=self._delete_report
         )
         delete_btn.pack(side="left")
@@ -161,7 +161,7 @@ class ReportCard(ctk.CTkFrame):
         popup.transient(self)
         popup.grab_set()
         popup.title("Risk Assessment Report")
-        popup.geometry("700x850") # Increased height for metrics
+        popup.geometry("700x850")
         popup.configure(fg_color=COLOR_BG)
 
         title_label = ctk.CTkLabel(popup, text=f"Report - {self.report_data['timestamp']}", font=TITLE_FONT, text_color=COLOR_TEXT)
@@ -179,28 +179,60 @@ class ReportCard(ctk.CTkFrame):
             metrics_text_content = ""
             for key, value in sim_data.items():
                 formatted_key = key.replace('_', ' ').title()
-                if isinstance(value, dict):
-                    metrics_text_content += f"{formatted_key}:\n"
-                    for sub_key, sub_value in value.items():
-                        metrics_text_content += f"  - {sub_key}: {sub_value:.2f}%\n"
-                elif isinstance(value, float):
-                    metrics_text_content += f"{formatted_key}: {value:.2f}\n"
-                else:
-                    metrics_text_content += f"{formatted_key}: {value}\n"
+                if key != "file_type_distribution_pct":
+                    if isinstance(value, dict):
+                        metrics_text_content += f"{formatted_key}:\n"
+                        for sub_key, sub_value in value.items():
+                            metrics_text_content += f"  - {sub_key}: {sub_value:.2f}%\n"
+                    elif isinstance(value, float):
+                        metrics_text_content += f"{formatted_key}: {value:.2f}\n"
+                    else:
+                        metrics_text_content += f"{formatted_key}: {value}\n"
             
-            metrics_textbox = ctk.CTkTextbox(main_frame, wrap="word", font=FONT, text_color=COLOR_TEXT, fg_color=COLOR_CARD, height=250, border_spacing=5)
-            metrics_textbox.pack(fill="x", expand=True)
+            metrics_textbox = ctk.CTkTextbox(main_frame, wrap="word", font=FONT, text_color=COLOR_TEXT, fg_color=COLOR_CARD, height=200, border_spacing=5)
+            metrics_textbox.pack(fill="x", expand=False, pady=(0, 10))
             metrics_textbox.insert("0.0", metrics_text_content)
             metrics_textbox.configure(state="disabled")
 
-        # Original Report Section
-        report_title_label = ctk.CTkLabel(main_frame, text="AI-Generated Summary", font=SUBTITLE_FONT, text_color=COLOR_TEXT)
-        report_title_label.pack(anchor="w", pady=(20, 5))
+            # File Type Distribution Chart
+            dist = sim_data.get("file_type_distribution_pct")
+            if dist and isinstance(dist, dict) and sum(dist.values()) > 0:
+                chart_title_label = ctk.CTkLabel(main_frame, text="File Type Distribution", font=SUBTITLE_FONT, text_color=COLOR_TEXT)
+                chart_title_label.pack(anchor="w", pady=(10, 5))
 
-        report_textbox = ctk.CTkTextbox(main_frame, wrap="word", font=FONT, text_color=COLOR_TEXT, fg_color=COLOR_CARD, height=200, border_spacing=5)
-        report_textbox.pack(fill="x", expand=True)
-        report_textbox.insert("0.0", self.report_data["report"])
-        report_textbox.configure(state="disabled")
+                plt.style.use('default')
+                fig, ax = plt.subplots(figsize=(6, 3))
+                labels = list(dist.keys())
+                sizes = list(dist.values())
+                
+                ax.barh(labels, sizes, color='#00cec9')
+                ax.set_xlabel('Percentage (%)')
+                ax.set_facecolor('#2b2b2b')
+                fig.patch.set_facecolor('#212121')
+                ax.tick_params(colors='#ffffff')
+                ax.xaxis.label.set_color('#ffffff')
+
+                buf = io.BytesIO()
+                plt.savefig(buf, format='png', bbox_inches='tight', facecolor='#212121')
+                buf.seek(0)
+                
+                # Create image frame
+                from PIL import Image, ImageTk
+                img = Image.open(buf)
+                img_ctk = ctk.CTkImage(light_image=img, dark_image=img, size=(600, 200))
+                img_label = ctk.CTkLabel(main_frame, image=img_ctk, text="")
+                img_label.image = img_ctk
+                img_label.pack(pady=(0, 10))
+                plt.close(fig)
+                # AI Summary
+                report_title_label = ctk.CTkLabel(main_frame, text="Summary", font=SUBTITLE_FONT, text_color=COLOR_TEXT)
+                report_title_label.pack(anchor="w", pady=(20, 5))
+
+                report_textbox = ctk.CTkTextbox(main_frame, wrap="word", font=FONT, text_color=COLOR_TEXT, fg_color=COLOR_CARD, height=100, border_spacing=5)
+                report_textbox.pack(fill="x", expand=False)
+                report_textbox.insert("0.0", self.report_data["report"])
+                report_textbox.configure(state="disabled")
+
 
         # Action buttons frame
         action_frame = ctk.CTkFrame(popup, fg_color="transparent")
@@ -270,16 +302,16 @@ class ReportCard(ctk.CTkFrame):
             # Chart
             dist = sim_data.get("file_type_distribution_pct")
             if dist and isinstance(dist, dict) and sum(dist.values()) > 0:
-                plt.style.use('dark_background')
-                fig, ax = plt.subplots(figsize=(6, 4), subplot_kw=dict(aspect="equal"))
-                labels = dist.keys()
-                sizes = dist.values()
+                plt.style.use('default')
+                fig, ax = plt.subplots(figsize=(6, 4))
+                labels = list(dist.keys())
+                sizes = list(dist.values())
                 
-                wedges, texts, autotexts = ax.pie(sizes, autopct='%1.1f%%',
-                                                  textprops=dict(color="w"))
-                ax.legend(wedges, labels, title="File Types", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
-                plt.setp(autotexts, size=8, weight="bold")
-                ax.set_title("File Type Distribution")
+                ax.barh(labels, sizes, color='#00cec9')
+                ax.set_xlabel('Percentage (%)')
+                ax.set_title('File Type Distribution')
+                ax.set_facecolor('#f5f5f5')
+                fig.patch.set_facecolor('#ffffff')
 
                 buf = io.BytesIO()
                 plt.savefig(buf, format='png', bbox_inches='tight')

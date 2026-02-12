@@ -6,6 +6,7 @@ import time
 import threading
 import tkinter as tk
 import customtkinter as ctk
+import psutil
 
 from Backend.redirector import LogRedirector
 # from Backend.encrypt import simulate_encrypt_folder
@@ -14,7 +15,6 @@ import Backend.reports_storage as reports_storage
 
 
 import sys
-
 
 try:
     from Backend.risk_summary_generator import RiskSummaryGenerator
@@ -207,6 +207,7 @@ class DashboardPage(ctk.CTkFrame):
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
         self.grid_rowconfigure(2, weight=0)
+        self.grid_rowconfigure(3, weight=0)
         self.grid_columnconfigure(0, weight=1)
 
         # ===== ROW 0: Title =====
@@ -218,53 +219,66 @@ class DashboardPage(ctk.CTkFrame):
         )
         title.grid(row=0, column=0, sticky="ew", padx=16, pady=(12, 6))
 
+        # ===== ROW 1: Recent Logs =====
+        self.logs_panel = TerminalPanel(self)
+        self.logs_panel.grid(row=1, column=0, sticky="nsew", padx=16, pady=(6, 12))
 
-        # ===== ROW 1: Main Content =====
+        # ===== ROW 2: Main Sentinel + Progress + Stats Area =====
         main_area = ctk.CTkFrame(self, fg_color="transparent")
-        main_area.grid(row=1, column=0, sticky="nsew", padx=16, pady=(6, 12))
-        main_area.grid_rowconfigure(0, weight=2)   # logs row (bigger)
-        main_area.grid_rowconfigure(1, weight=3)   # lower split row (controls + stats)
-        main_area.grid_columnconfigure(0, weight=1)
+        main_area.grid(row=2, column=0, sticky="nsew", padx=16, pady=(0, 12))
+        main_area.grid_rowconfigure(0, weight=1)
+        main_area.grid_columnconfigure(0, weight=1)   # Sentinel (left)
+        main_area.grid_columnconfigure(1, weight=0, minsize=120)   # Progress (center)
+        main_area.grid_columnconfigure(2, weight=2)   # Stats (right)
 
-        # recent logs top
-        self.logs_panel = TerminalPanel(main_area)
-        self.logs_panel.grid(row=0, column=0, sticky="nsew", pady=(0, 12))
+        # Sentinel Monitor Card (left)
+        self.sentinel_monitor_card = SentinelMonitorCard(main_area, sentinel_page_ref=None)
+        self.sentinel_monitor_card.grid(row=0, column=0, sticky="nsew", padx=(0, 8))
 
-        # Lower area: two columns (left: sentinel monitor, right: stats) 
-        lower_area = ctk.CTkFrame(main_area, fg_color="transparent")
-        lower_area.grid(row=1, column=0, sticky="nsew")
-        lower_area.grid_columnconfigure(0, weight=1)  
-        lower_area.grid_columnconfigure(1, weight=2)  
-        lower_area.grid_rowconfigure(0, weight=1)
+        # Progress Card (center)
+        self.card_progress = ProgressCard(main_area)
+        self.card_progress.grid(row=0, column=1, sticky="ns", padx=(4, 8))
 
-        # Sentinel Monitor Card (left) - will be linked to Sentinel page
-        self.sentinel_monitor_card = SentinelMonitorCard(lower_area, sentinel_page_ref=None)
-        self.sentinel_monitor_card.grid(row=0, column=0, sticky="nsew", padx=(5, 7))
-
-        # Stats column (right)
-        stats_col = ctk.CTkFrame(lower_area, fg_color="transparent")
-        stats_col.grid(row=0, column=1, sticky="nsew")
-        stats_col.grid_rowconfigure(0, weight=1)
-        stats_col.grid_rowconfigure(1, weight=1)
-        stats_col.grid_rowconfigure(2, weight=1)
+        # Stats area (right) - restructured with 2 columns and 3 rows
+        stats_col = ctk.CTkFrame(main_area, fg_color="transparent")
+        stats_col.grid(row=0, column=2, sticky="nsew")
+        stats_col.grid_rowconfigure(0, weight=0)
+        stats_col.grid_rowconfigure(1, weight=0)
+        stats_col.grid_rowconfigure(2, weight=0)
         stats_col.grid_columnconfigure(0, weight=1)
+        stats_col.grid_columnconfigure(1, weight=1)
 
-        # Top stats row (two cards)
-        self.card_files_found = StatsCard(stats_col, "Files Found", "0")
-        self.card_files_found.grid(row=0, column=0, sticky="nsew", padx=6, pady=(0, 8))
+        # Row 0: Files Found | CPU Utilization
+        self.card_files_found = StatsCard(stats_col, "Files found", "0")
+        self.card_files_found.grid(row=0, column=0, sticky="nsew", padx=(0, 4), pady=(0, 8))
 
-        self.card_files_pct = StatsCard(stats_col, "Progress", "0%")
-        self.card_files_pct.grid(row=0, column=1, sticky="nsew", padx=6, pady=(0, 8))
+        self.card_cpu = StatsCard(stats_col, "Cpu Utilization", "0 %")
+        self.card_cpu.grid(row=0, column=1, sticky="nsew", padx=(4, 0), pady=(0, 8))
 
-        self.card_files_encrypted = StatsCard(stats_col, "Files Encrypted", "0")
-        self.card_files_encrypted.grid(row=1, column=0, sticky="nsew", padx=6, pady=(8, 0))
+        # Row 1: Encrypted | Memory Utilization
+        self.card_files_encrypted = StatsCard(stats_col, "Encrypted", "0")
+        self.card_files_encrypted.grid(row=1, column=0, sticky="nsew", padx=(0, 4), pady=(0, 8))
 
-        self.card_time_elapsed = StatsCard(stats_col, "Time Elapsed", "00:00")
-        self.card_time_elapsed.grid(row=1, column=1, sticky="nsew", padx=6, pady=(8, 0))
+        self.card_memory = StatsCard(stats_col, "Memory Utilization", "0 MB")
+        self.card_memory.grid(row=1, column=1, sticky="nsew", padx=(4, 0), pady=(0, 8))
 
-        # Risk Assessment Card
-        ai_card = ctk.CTkFrame(stats_col, fg_color=COLOR_CARD, corner_radius=12)
-        ai_card.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=6, pady=(8, 0))
+        # Row 2: Time Elapsed (spans both columns or single)
+        self.card_time_elapsed = StatsCard(stats_col, "Time Elapsed", "0")
+        self.card_time_elapsed.grid(row=2, column=0, columnspan=2, sticky="nsew", pady=(0, 0))
+
+        # Start metrics update thread
+        self._start_metrics_update()
+
+        # ===== ROW 3: Report and Buttons Area =====
+        report_section = ctk.CTkFrame(self, fg_color="transparent")
+        report_section.grid(row=3, column=0, sticky="nsew", padx=16, pady=(0, 14))
+        report_section.grid_rowconfigure(0, weight=1)
+        report_section.grid_columnconfigure(0, weight=1)
+        report_section.grid_columnconfigure(1, weight=0)
+
+        # Report Card (left side, expanded)
+        ai_card = ctk.CTkFrame(report_section, fg_color=COLOR_CARD, corner_radius=12)
+        ai_card.grid(row=0, column=0, sticky="nsew", padx=(0, 12))
         ai_card.grid_columnconfigure(0, weight=1)
         ai_card.grid_rowconfigure(1, weight=1)
 
@@ -282,55 +296,67 @@ class DashboardPage(ctk.CTkFrame):
             font=MONO_FONT,
             text_color="#ffffff",
             fg_color="#000000",
-            height=100
+            height=80
         )
         self.ai_textbox.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 5))
         self.ai_textbox.insert("0.0", "Generate A Report after running a simulation...")
         self.ai_textbox.configure(state="disabled")
 
+        # Buttons column (right side)
+        buttons_col = ctk.CTkFrame(report_section, fg_color="transparent")
+        buttons_col.grid(row=0, column=1, sticky="nsew")
+        buttons_col.grid_rowconfigure(0, weight=1)
+        buttons_col.grid_rowconfigure(1, weight=1)
+        buttons_col.grid_columnconfigure(0, weight=1)
+
         # Generate Report Button
         self.generate_report_btn = ctk.CTkButton(
-            ai_card,
+            buttons_col,
             text="Generate Report",
             fg_color=COLOR_BTN_START,
-            hover_color="#27ae60",
+            hover_color="#229954",
             corner_radius=8,
-            height=30,
+            height=40,
             font=("Roboto", 10, "bold"),
             command=self.generate_ai_report
         )
-        self.generate_report_btn.grid(row=2, column=0, sticky="ew", padx=12, pady=(0, 10))
+        self.generate_report_btn.grid(row=0, column=0, sticky="nsew", pady=(0, 8))
 
-        progress_holder = ctk.CTkFrame(lower_area, fg_color="transparent")
-        progress_holder.grid(row=0, column=2, rowspan=1, sticky="nsew", padx=(8,0))
-        # Note: ensure lower_area has a 3rd column for the progress holder if needed
-        lower_area.grid_columnconfigure(2, weight=0, minsize=120)
-
-        self.card_progress = ProgressCard(progress_holder)
-        self.card_progress.pack(anchor="n", pady=6, padx=6)
-
-
-        # ROW 2: Footer - Stop Process button centered 
-        footer_row = ctk.CTkFrame(self, fg_color="transparent")
-        footer_row.grid(row=2, column=0, sticky="ew", padx=16, pady=(6, 14))
-        footer_row.grid_columnconfigure(0, weight=1)
-
+        # Stop Process Button
         self.stop_process_btn = ctk.CTkButton(
-            footer_row,
-            text="Stop Process",
+            buttons_col,
+            text="Stop process",
             fg_color=COLOR_BTN_STOP,
             hover_color="#a93226",
-            corner_radius=20,
+            corner_radius=8,
             height=40,
-            width=320,
-            font=("Roboto", 14, "bold"),
+            font=("Roboto", 10, "bold"),
             command=self.stop_simulation
         )
-        self.stop_process_btn.grid(row=0, column=0, pady=0)
-
+        self.stop_process_btn.grid(row=1, column=0, sticky="nsew", pady=(0, 0))
 
         # Redirect stdout -> logs panel
         sys.stdout = LogRedirector(self.logs_panel)
+
+    def _start_metrics_update(self):
+        """Start a background thread that updates CPU and Memory metrics."""
+        def update_metrics():
+            while self._active:
+                try:
+                    cpu_percent = psutil.cpu_percent(interval=0.5)
+                    memory_info = psutil.virtual_memory()
+                    memory_mb = memory_info.used / (1024 * 1024)
+                    
+                    if self.winfo_exists():
+                        self.card_cpu.set_value(f"{cpu_percent} %")
+                        self.card_memory.set_value(f"{memory_mb:.0f} MB")
+                except Exception as e:
+                    print(f"Error updating metrics: {e}")
+                
+                time.sleep(1)
+        
+        metrics_thread = threading.Thread(target=update_metrics, daemon=True)
+        metrics_thread.start()
 
     def start_simulation(self):
         if self._sim_thread and self._sim_thread.is_alive():
@@ -339,7 +365,6 @@ class DashboardPage(ctk.CTkFrame):
 
         folder = self.control_panel  # preserve behavior; backend will validate
         print("Starting simulation...")
-        self.simulator_status.set_text("Simulator: Running")
         self._stop_event = threading.Event()
         self._files_done = 0
         self._files_total = 0
@@ -364,7 +389,6 @@ class DashboardPage(ctk.CTkFrame):
                         self.card_time_elapsed.set_value(f"{mins:02d}:{secs:02d}")
                         # progress percent
                         pct = int(i / (self._files_total or 1) * 100)
-                        self.card_files_pct.set_value(f"{pct}%")
                         self.card_progress.set_progress(pct)
 
                     self.after(0, update_ui)
@@ -372,7 +396,6 @@ class DashboardPage(ctk.CTkFrame):
                 print(f"[Error] {e}")
             finally:
                 if self.winfo_exists():
-                    self.simulator_status.set_text("Simulator: Completed")
                     # Store simulation data for AI report
                     elapsed = time.time() - self._start_time
                     shared_data.last_simulation_data = {
@@ -388,8 +411,7 @@ class DashboardPage(ctk.CTkFrame):
     def stop_simulation(self):
         if self._stop_event and not self._stop_event.is_set():
             self._stop_event.set()
-            print("aborting ....")
-            self.simulator_status.set_text("Simulator: Idle")
+            print("Aborting simulation...")
         else:
             print("No active simulation to stop.")
 

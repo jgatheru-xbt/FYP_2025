@@ -76,7 +76,7 @@ class CanaryFileSystemEventHandler(FileSystemEventHandler):
                     continue
                 
                 # The simulator transforms "CONFIDENTIAL_REPORT.txt" -> "CONFIDENTIAL_REPORT.txt.enc"
-                expected_enc_name = f"{canary_name}.enc"
+                expected_enc_name = f"{canary_name}.encrypted"
                 
                 print(f"[Sentinel] Checking: file={file_name} vs expected={expected_enc_name}")
                 

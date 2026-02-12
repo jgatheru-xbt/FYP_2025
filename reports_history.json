@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-01-23 16:51:52",
-    "input_data": "Encryption speed: 24.218083540020775 files/sec, Files encrypted: 29, Time: 1.1974523067474365 seconds, Algorithm: AES",
-    "report": "[AI SECURITY REPORT: HIGH]\n\nThreat Analysis: High encryption speed (24.218083540020775 files/sec) suggests ransomware activity.\n\nBusiness Impact: Significant data at risk within minutes.\n\nMitigation: 1. Stop the process. 2. Check backups. 3. Scan for malware.",
-    "simulation_data": {
-      "speed": 24.218083540020775,
-      "files": 29,
-      "time": 1.1974523067474365,
-      "algorithm": "AES"
-    }
-  },
-  {
     "timestamp": "2026-01-28 10:27:33",
     "input_data": "Encryption speed: 38.90020141189273 files/sec, Files encrypted: 6, Time: 0.15424084663391113 seconds, Algorithm: AES",
     "report": "[AI SECURITY REPORT: HIGH]\n\nThreat Analysis: High encryption speed (38.90020141189273 files/sec) suggests ransomware activity.\n\nBusiness Impact: Significant data at risk within minutes.\n\nMitigation: 1. Stop the process. 2. Check backups. 3. Scan for malware.",
@@ -110,6 +99,86 @@
         ".html": 0.4149377593360996,
         ".js": 0.4149377593360996,
         ".css": 0.4149377593360996
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-09 16:36:20",
+    "input_data": "Encryption speed: N/A files/sec, Files encrypted: N/A, Time: N/A seconds, Algorithm: AES",
+    "report": "[AI SECURITY REPORT: LOW]\n\nThreat Analysis: Slow encryption rate (0 files/sec), likely benign.\n\nBusiness Impact: Minimal immediate threat.\n\nMitigation: 1. Log activity. 2. Verify authorization. 3. Continue monitoring.",
+    "simulation_data": {
+      "algorithm": "AES",
+      "elapsed_time": 24.04097008705139,
+      "total_files": 233,
+      "encrypted_files": 233,
+      "failed_files": 0,
+      "encryption_speed_fps": 9.691788607378001,
+      "throughput_mbps": 2.6939006786890167,
+      "average_file_size_bytes": 291459.0600858369,
+      "peak_cpu_usage_pct": 416.7,
+      "peak_memory_overhead_mb": 25.58984375,
+      "average_entropy_increase": 0.3467721474981594,
+      "survival_rate_pct": 0.0,
+      "file_type_distribution_pct": {
+        ".txt": 6.008583690987124,
+        ".zip": 1.2875536480686696,
+        ".gz": 0.4291845493562232,
+        ".pdf": 0.4291845493562232,
+        ".xlsx": 0.4291845493562232,
+        ".pptx": 0.4291845493562232,
+        ".docx": 0.4291845493562232,
+        ".png": 72.53218884120172,
+        ".jpg": 6.866952789699571,
+        ".webp": 1.2875536480686696,
+        ".jpeg": 1.7167381974248928,
+        ".lnk": 0.8583690987124464,
+        ".avif": 3.862660944206009,
+        ".ini": 0.8583690987124464,
+        ".mp4": 0.4291845493562232,
+        ".py": 0.8583690987124464,
+        ".html": 0.4291845493562232,
+        ".js": 0.4291845493562232,
+        ".css": 0.4291845493562232
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-12 12:41:22",
+    "input_data": "Encryption speed: N/A files/sec, Files encrypted: N/A, Time: N/A seconds, Algorithm: AES",
+    "report": "[AI SECURITY REPORT: LOW]\n\nThreat Analysis: Slow encryption rate (0 files/sec), likely benign.\n\nBusiness Impact: Minimal immediate threat.\n\nMitigation: 1. Log activity. 2. Verify authorization. 3. Continue monitoring.",
+    "simulation_data": {
+      "algorithm": "AES",
+      "elapsed_time": 23.38560676574707,
+      "total_files": 233,
+      "encrypted_files": 233,
+      "failed_files": 0,
+      "encryption_speed_fps": 9.963393395516913,
+      "throughput_mbps": 2.7693951361873577,
+      "average_file_size_bytes": 291459.0600858369,
+      "peak_cpu_usage_pct": 180.3,
+      "peak_memory_overhead_mb": 25.02734375,
+      "average_entropy_increase": 0.348269701619119,
+      "survival_rate_pct": 0.0,
+      "file_type_distribution_pct": {
+        ".txt": 6.008583690987124,
+        ".zip": 1.2875536480686696,
+        ".gz": 0.4291845493562232,
+        ".pdf": 0.4291845493562232,
+        ".xlsx": 0.4291845493562232,
+        ".pptx": 0.4291845493562232,
+        ".docx": 0.4291845493562232,
+        ".png": 72.53218884120172,
+        ".jpg": 6.866952789699571,
+        ".webp": 1.2875536480686696,
+        ".jpeg": 1.7167381974248928,
+        ".lnk": 0.8583690987124464,
+        ".avif": 3.862660944206009,
+        ".ini": 0.8583690987124464,
+        ".mp4": 0.4291845493562232,
+        ".py": 0.8583690987124464,
+        ".html": 0.4291845493562232,
+        ".js": 0.4291845493562232,
+        ".css": 0.4291845493562232
       }
     }
   }

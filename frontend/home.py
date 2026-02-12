@@ -1,6 +1,8 @@
 import customtkinter as ctk
 import webbrowser
 
+from PIL import Image
+
 class HomePage(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, fg_color="#111111", **kwargs)
@@ -13,15 +15,23 @@ class HomePage(ctk.CTkFrame):
         self.center_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.center_frame.grid(row=0, column=0, sticky="ns")
         
-        # --- HEADER SECTION ---
-        # Icon (Placeholder)
+    #   image/ icon ==> i used pillow to open image first as ct was problematic 
+        image_file = Image.open("frontend/resources/about.jpg")
+
+        # 2. Create the CTkImage using the opened file
+        self.icon_image = ctk.CTkImage(
+            light_image=image_file,
+            dark_image=image_file,
+            size=(40, 40)
+        )
+
+        # 3. Create and pack the label
         self.icon_label = ctk.CTkLabel(
             self.center_frame,
-            text="🛡️",  # Shield icon as placeholder
-            font=("Roboto", 40),
-            text_color="white"
+            image=self.icon_image,
+            text=""
         )
-        self.icon_label.pack(pady=(0, 10))
+        self.icon_label.pack(pady=(10, 10))
 
         # "ABOUT" Title
         self.about_label = ctk.CTkLabel(
@@ -41,8 +51,7 @@ class HomePage(ctk.CTkFrame):
         )
         self.separator.pack(pady=(0, 40))
 
-        # --- DISCLAIMER SECTION ---
-        # "DISCLAIMER :" Title
+        # DISCLAIMER  
         self.disclaimer_title = ctk.CTkLabel(
             self.center_frame, 
             text="DISCLAIMER :", 
@@ -50,11 +59,7 @@ class HomePage(ctk.CTkFrame):
             text_color="white",
             anchor="w"
         )
-        # Pack with fill="x" so it aligns left relative to the text block if we use a frame, 
-        # or just standard pack if we want it centered above. 
-        # The prompt says "Align this slightly to the left of the text block below it."
-        # A simple way is to put both in a frame that is centered, but their contents are left aligned?
-        # Let's try packing it normally first, but maybe using a frame for the text block.
+
         
         self.content_container = ctk.CTkFrame(self.center_frame, fg_color="transparent")
         self.content_container.pack(pady=(0, 30), padx=20)
@@ -74,8 +79,8 @@ class HomePage(ctk.CTkFrame):
         self.disclaimer_body = ctk.CTkLabel(
             self.content_container,
             text=disclaimer_text,
-            font=("Roboto", 20),
-            text_color="#CCCCCC",
+            font=("Gerogia", 20),
+            text_color="#FFFFFF",
             wraplength=600,
             justify="left"
         )

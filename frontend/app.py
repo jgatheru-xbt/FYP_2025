@@ -3,10 +3,8 @@ import tkinter as tk
 import os
 import sys
 
-# Add project root to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-# Import page classes
 from frontend.home import HomePage
 from frontend.dashboard import DashboardPage
 from frontend.recovery import RecoveryPage
@@ -15,11 +13,11 @@ from frontend.sentinel import SentinelPage
 from frontend.reports_page import ReportsPage
 from Backend.safe_zone import SAFE_ZONE_PATH
 
-# Set appearance mode and default color theme
+# Seting appearance mode and default color theme
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 
-# Define common fonts ---->> i just realised windows has an entire collection of preinstalled fonts, cool :)
+# Defining common fonts ---->> i just realised windows has an entire collection of preinstalled fonts, cool :)
 FONT = ("fixedsys", 12)
 TITLE_FONT = ("fixedsys", 20, "bold")
 SIDEBAR_FONT = ("fixedsys", 14, "bold")
@@ -40,7 +38,7 @@ class NavigationSidebar(ctk.CTkFrame):
         self.logo_frame.grid_columnconfigure(0, weight=1)
 
         self.logo = ctk.CTkLabel(
-            self.logo_frame, text="", fg_color="#1500FA", width=30, height=30
+            self.logo_frame, text="", fg_color="#030000", width=30, height=30
         )
         self.logo.pack(side="left", padx=(0, 10))
 
@@ -57,8 +55,8 @@ class NavigationSidebar(ctk.CTkFrame):
             ("Home", "home_page"),
             ("Dashboard", "dashboard_page"),
             ("Simulation", "simulation_page"),
-            ("Recover", "recovery_page"),
             ("Sentinel", "sentinel_page"),
+            ("Recover", "recovery_page"),
             ("Reports", "reports_page"),
         ]
 
