@@ -254,7 +254,7 @@ class SimulationSettings(ctk.CTkFrame):
             height=100
         )
         self.ransom_note_text.grid(row=8, column=0, columnspan=2, sticky="ew", padx=20, pady=(0, 25))
-        self.ransom_note_text.insert("1.0", "Your files have been encrypted.\nPay ransom to recover.")
+        self.ransom_note_text.insert("1.0", "enter ransom note texthere ...")
         
         # Action Buttons
         start_btn = ctk.CTkButton(
@@ -348,14 +348,14 @@ class SimulationSettings(ctk.CTkFrame):
         else:
             algorithm = alg_raw
 
-        # If all_files is True, allowed_ext will be None (scan everything)
+
         allowed_ext = None if all_files else None  # keep None here so encrypt.py default is used                                           # but when calling in-process we can pass None to mean all
         # Try to run in-process (preferred) so we can receive structured progress callbacks
         
         try:
             # Import the simulate function directly
             from Backend.encrypt import simulate_encrypt_folder
-            print("[UI] Running simulation in-process (direct call to simulate_encrypt_folder).")
+            # print("[UI] Running simulation in-process (direct call to simulate_encrypt_folder).")
 
             last_data = {'files': 0, 'time': 0}
 
@@ -380,14 +380,12 @@ class SimulationSettings(ctk.CTkFrame):
                         mins, secs = divmod(int(elapsed), 60)
                         dashboard.card_time_elapsed.set_value(f"{mins:02d}:{secs:02d}")
                         # Percent/progress
-                        pct = int(done / (total or 1) * 100)
-                        dashboard.card_files_pct.set_value(f"{pct}%")
-                        dashboard.card_progress.set_progress(pct)
+                        # dashboard.card_progress.set_progress(pct)
                     dashboard.after(0, ui_update)
 
             # Call the simulation (this will print to stdout as well)
             simulation_metrics = simulate_encrypt_folder(folder, test_mode=True, algorithm=algorithm, stop_event=stop_event, progress_callback=progress_callback, allowed_ext=(None if all_files else None), drop_ransom_note=drop_ransom_note, ransom_note_content=ransom_note_content)
-            print("[UI] simulate_encrypt_folder returned (in-process).")
+            # print("[UI] simulate_encrypt_folder returned (in-process).")
             # Store simulation data
             if simulation_metrics:
                 shared_data.last_simulation_data = simulation_metrics

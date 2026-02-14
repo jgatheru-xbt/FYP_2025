@@ -84,7 +84,7 @@ class CanaryFileSystemEventHandler(FileSystemEventHandler):
                 if file_name == expected_enc_name:
                     # Verify it's in or near the canary's deployment location
                     if self._is_in_encrypted_folder(file_path, canary_path):
-                        print(f"[Sentinel] ✓ MATCH FOUND: Canary '{canary_name}' triggered!")
+                        print(f"[Sentinel] MATCH FOUND: Canary '{canary_name}' triggered!")
                         # Mark canary as triggered with timestamp
                         canary['status'] = 'triggered'
                         canary['triggered_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

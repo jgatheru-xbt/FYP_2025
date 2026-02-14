@@ -134,7 +134,7 @@ def simulate_encrypt_folder(folder: str, test_mode=True, algorithm: str = "AES",
 
     files = list(scan_for_files(root, allowed_ext=allowed_ext))
     total_files = len(files)
-    print(f"Found {total_files} target files to encrypt (copies).")
+    print(f"Found {total_files} target files to encrypt.")
 
     # Metrics Initialization
     process = psutil.Process(os.getpid())

@@ -1,6 +1,18 @@
 import customtkinter as ctk
 import tkinter as tk
 import os
+
+import customtkinter as ctk
+import tkinter as tk
+import os
+from tkinter import messagebox
+from datetime import datetime
+import Backend.reports_storage as reports_storage
+from fpdf import FPDF
+import matplotlib.pyplot as plt
+import io
+
+
 from tkinter import messagebox
 from datetime import datetime
 import Backend.reports_storage as reports_storage
@@ -15,7 +27,7 @@ SMALL_FONT = ("Roboto", 9)
 # Color Palette
 COLOR_BG = "#212121"
 COLOR_CARD = "#2b2b2b"
-COLOR_ACCENT = "#00cec9"
+COLOR_ACCENT = "#00A8A8"
 COLOR_BUTTON = "#27ae60"
 COLOR_WARNING = "#e67e22"
 COLOR_DANGER = "#e74c3c"
@@ -23,15 +35,7 @@ COLOR_TEXT = "#ffffff"
 COLOR_TEXT_SECONDARY = "#b0b0b0"
 
 
-import customtkinter as ctk
-import tkinter as tk
-import os
-from tkinter import messagebox
-from datetime import datetime
-import Backend.reports_storage as reports_storage
-from fpdf import FPDF
-import matplotlib.pyplot as plt
-import io
+
 
 # Define common fonts and colors
 FONT = ("Roboto", 12)

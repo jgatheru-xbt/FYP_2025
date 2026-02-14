@@ -181,5 +181,100 @@
         ".css": 0.4291845493562232
       }
     }
+  },
+  {
+    "timestamp": "2026-02-13 07:32:45",
+    "input_data": "Encryption speed: N/A files/sec, Files encrypted: N/A, Time: N/A seconds, Algorithm: AES",
+    "report": "[AI SECURITY REPORT: LOW]\n\nThreat Analysis: Slow encryption rate (0 files/sec), likely benign.\n\nBusiness Impact: Minimal immediate threat.\n\nMitigation: 1. Log activity. 2. Verify authorization. 3. Continue monitoring.",
+    "simulation_data": {
+      "algorithm": "AES",
+      "elapsed_time": 1.077458143234253,
+      "total_files": 18,
+      "encrypted_files": 18,
+      "failed_files": 0,
+      "encryption_speed_fps": 16.705985390735105,
+      "throughput_mbps": 0.006894160387698052,
+      "average_file_size_bytes": 432.72222222222223,
+      "peak_cpu_usage_pct": 203.8,
+      "peak_memory_overhead_mb": 1.2890625,
+      "average_entropy_increase": 1.1626105894979113,
+      "survival_rate_pct": 0.0,
+      "file_type_distribution_pct": {
+        ".txt": 16.666666666666664,
+        ".zip": 5.555555555555555,
+        ".gz": 5.555555555555555,
+        ".pdf": 5.555555555555555,
+        ".xlsx": 5.555555555555555,
+        ".pptx": 5.555555555555555,
+        ".docx": 5.555555555555555,
+        ".jpg": 16.666666666666664,
+        ".png": 5.555555555555555,
+        ".py": 11.11111111111111,
+        ".html": 5.555555555555555,
+        ".js": 5.555555555555555,
+        ".css": 5.555555555555555
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-13 07:54:13",
+    "input_data": "Encryption speed: N/A files/sec, Files encrypted: N/A, Time: N/A seconds, Algorithm: AES",
+    "report": "[AI SECURITY REPORT: LOW]\n\nThreat Analysis: Slow encryption rate (0 files/sec), likely benign.\n\nBusiness Impact: Minimal immediate threat.\n\nMitigation: 1. Log activity. 2. Verify authorization. 3. Continue monitoring.",
+    "simulation_data": {
+      "algorithm": "AES",
+      "elapsed_time": 0.716388463973999,
+      "total_files": 17,
+      "encrypted_files": 17,
+      "failed_files": 0,
+      "encryption_speed_fps": 23.730142031735742,
+      "throughput_mbps": 0.017412424523695975,
+      "average_file_size_bytes": 769.4117647058823,
+      "peak_cpu_usage_pct": 151.2,
+      "peak_memory_overhead_mb": 0.3984375,
+      "average_entropy_increase": 1.1519860131553503,
+      "survival_rate_pct": 0.0,
+      "file_type_distribution_pct": {
+        ".zip": 5.88235294117647,
+        ".gz": 5.88235294117647,
+        ".txt": 11.76470588235294,
+        ".pdf": 5.88235294117647,
+        ".xlsx": 5.88235294117647,
+        ".pptx": 5.88235294117647,
+        ".docx": 5.88235294117647,
+        ".jpg": 17.647058823529413,
+        ".png": 5.88235294117647,
+        ".py": 11.76470588235294,
+        ".html": 5.88235294117647,
+        ".js": 5.88235294117647,
+        ".css": 5.88235294117647
+      }
+    }
+  },
+  {
+    "timestamp": "2026-02-13 13:03:41",
+    "input_data": "Encryption speed: N/A files/sec, Files encrypted: N/A, Time: N/A seconds, Algorithm: AES",
+    "report": "[AI SECURITY REPORT: LOW]\n\nThreat Analysis: Slow encryption rate (0 files/sec), likely benign.\n\nBusiness Impact: Minimal immediate threat.\n\nMitigation: 1. Log activity. 2. Verify authorization. 3. Continue monitoring.",
+    "simulation_data": {
+      "algorithm": "AES",
+      "elapsed_time": 10.755818843841553,
+      "total_files": 26,
+      "encrypted_files": 26,
+      "failed_files": 0,
+      "encryption_speed_fps": 2.4172961982236054,
+      "throughput_mbps": 2.3178148360831363,
+      "average_file_size_bytes": 1005422.9230769231,
+      "peak_cpu_usage_pct": 160.3,
+      "peak_memory_overhead_mb": 37.171875,
+      "average_entropy_increase": 0.7698018654663474,
+      "survival_rate_pct": 0.0,
+      "file_type_distribution_pct": {
+        ".pdf": 23.076923076923077,
+        ".txt": 19.230769230769234,
+        ".docx": 26.923076923076923,
+        ".pptx": 11.538461538461538,
+        ".jpeg": 3.8461538461538463,
+        ".png": 15.384615384615385
+      }
+    }
   }
 ]

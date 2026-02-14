@@ -5,3 +5,6 @@ venv_old
 reports_history
 training_data.json
 risk_summary_model
+dist
+build
+RansomwareSimulator.spec

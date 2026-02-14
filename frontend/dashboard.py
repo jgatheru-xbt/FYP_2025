@@ -236,8 +236,8 @@ class DashboardPage(ctk.CTkFrame):
         self.sentinel_monitor_card.grid(row=0, column=0, sticky="nsew", padx=(0, 8))
 
         # Progress Card (center)
-        self.card_progress = ProgressCard(main_area)
-        self.card_progress.grid(row=0, column=1, sticky="ns", padx=(4, 8))
+        # self.card_progress = ProgressCard(main_area)
+        # self.card_progress.grid(row=0, column=1, sticky="ns", padx=(4, 8))
 
         # Stats area (right) - restructured with 2 columns and 3 rows
         stats_col = ctk.CTkFrame(main_area, fg_color="transparent")
@@ -452,7 +452,7 @@ class DashboardPage(ctk.CTkFrame):
                 
                 self.after(0, lambda: self._update_ai_text(summary))
             except Exception as e:
-                self.after(0, lambda: self._update_ai_text(f"Error generating report: {str(e)}"))
+                self.after(0, lambda err=e: self._update_ai_text(f"Error generating report: {str(err)}"))
         
         threading.Thread(target=generate, daemon=True).start()
     

@@ -74,7 +74,6 @@ def populate_safe_zone():
                     else:
                         # For other files, just write some random bytes
                         file_path.write_bytes(os.urandom(random.randint(100, 512)))
-                    print(f"Created dummy file: {file_path}")
                 except IOError as e:
                     print(f"Failed to create dummy file {file_path}: {e}")
 

