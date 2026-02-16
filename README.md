@@ -1,2 +1,6 @@
 LINK TO GOOGLE DRIVE CAPSTONE VIDEO PRESENTATIONS FOR JAMES GATHERU MACHARIA 
 https://drive.google.com/drive/folders/1_bnNb5SH3JCatHnUXcc8WZo_f9fDjVFK?usp=drive_link
+
+
+LINK TO GOOGLE DRIVE CAPSTONE VIDEO PRESENTATIONS FOR KYALO SAMUEL KAMAU
+https://drive.google.com/drive/folders/1WJG1WpYI-iSGsBWnyeTM3No2BuKdKTFP?usp=drive_link
